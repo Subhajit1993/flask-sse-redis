@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_sse import sse
 
 
 def create_app(config=None):
@@ -14,5 +15,5 @@ def create_app(config=None):
     # Routes and Controllers
     from flaskr.controllers.home import home_bp
     app.register_blueprint(home_bp, url_prefix='/')
-
+    app.register_blueprint(sse, url_prefix='/stream')
     return app

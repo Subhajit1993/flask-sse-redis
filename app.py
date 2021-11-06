@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 
+
 if os.getenv("FLASK_ENV") is None:
     raise Exception("No environment set")
 

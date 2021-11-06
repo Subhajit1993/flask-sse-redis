@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FLASK, SSE and Redis</title>
+</head>
+<body>
+  <h1>FLASK, SSE and Redis</h1>
+<input type="file" accept="video/mp4" id="file-upload">
+<button type="button" onclick="send_file()">Submit</button>
+</body>
+<script>
+    var send_file = function () {
+
+        let video = document.getElementById("file-upload").files[0];
+        let formData = new FormData();
+        formData.append("file", video);
+
+        var requestOptions = {
+            method: 'POST',
+            body: formData,
+            redirect: 'follow'
+        };
+        fetch("http://0.0.0.0:5000/upload", requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                result = JSON.parse(result)
+                var file_id = result.data.file_id
+                initiate_sse(file_id)
+            })
+            .catch(error => console.log('error', error));
+    }
+
+    function initiate_sse(file_id) {
+        var sse_url = "http://0.0.0.0:5000/stream?channel=video-audio."+file_id
+        var source = new EventSource(sse_url);
+        source.addEventListener('message', function(event) {
+            console.log(event.data)
+        });
+        source.addEventListener('error', function(event) {
+            console.log("Error == ", event.data)
+        });
+    }
+ </script>
+</html>
